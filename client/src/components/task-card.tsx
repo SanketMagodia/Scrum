@@ -1,4 +1,4 @@
-import { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Task } from "@shared/schema";
@@ -15,6 +15,7 @@ import {
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 
 interface TaskCardProps {
   task: Task;
@@ -22,15 +23,37 @@ interface TaskCardProps {
   onUpdate: (task: Task) => void;
 }
 
+const colorOptions = [
+  { value: "bg-red-100", label: "Red" },
+  { value: "bg-blue-100", label: "Blue" },
+  { value: "bg-green-100", label: "Green" },
+  { value: "bg-yellow-100", label: "Yellow" },
+  { value: "bg-purple-100", label: "Purple" },
+];
+
+const statusOptions = [
+  { value: "pending", label: "Pending" },
+  { value: "ongoing", label: "Ongoing" },
+  { value: "completed", label: "Completed" },
+];
+
 export default function TaskCard({ task, onDelete, onUpdate }: TaskCardProps) {
   const { toast } = useToast();
   const [isEditing, setIsEditing] = useState(false);
   const [editedTask, setEditedTask] = useState(task);
 
+  useEffect(() => {
+    const storedColor = localStorage.getItem(`taskColor_${task._id}`);
+    if (storedColor) {
+      setEditedTask(prevTask => ({ ...prevTask, color: storedColor }));
+    }
+  }, [task._id]);
+
   const handleDelete = async () => {
     try {
       await deleteTask(task._id);
       onDelete(task._id);
+      localStorage.removeItem(`taskColor_${task._id}`);
       toast({ title: "Task deleted successfully" });
     } catch (error) {
       toast({ title: "Failed to delete task", variant: "destructive" });
@@ -42,17 +65,23 @@ export default function TaskCard({ task, onDelete, onUpdate }: TaskCardProps) {
       await updateTask(task._id, editedTask);
       onUpdate(editedTask);
       setIsEditing(false);
+      localStorage.setItem(`taskColor_${task._id}`, editedTask.color || '');
       toast({ title: "Task updated successfully" });
     } catch (error) {
       toast({ title: "Failed to update task", variant: "destructive" });
     }
   };
 
+  const handleColorChange = (color: string) => {
+    setEditedTask(prevTask => ({ ...prevTask, color }));
+    localStorage.setItem(`taskColor_${task._id}`, color);
+  };
+
   return (
-    <Card>
+    <Card className={editedTask.color || "bg-white"}>
       <CardHeader className="p-4">
         <div className="flex justify-between items-start">
-          <CardTitle className="text-lg">{task.title}</CardTitle>
+          <CardTitle className="text-lg">{editedTask.title}</CardTitle>
           <div className="flex gap-2">
             <Dialog open={isEditing} onOpenChange={setIsEditing}>
               <DialogTrigger asChild>
@@ -102,6 +131,42 @@ export default function TaskCard({ task, onDelete, onUpdate }: TaskCardProps) {
                       }
                     />
                   </div>
+                  <div>
+                    <Label>Status</Label>
+                    <Select
+                      value={editedTask.status}
+                      onValueChange={(value) => setEditedTask({ ...editedTask, status: value as Task['status'] })}
+                    >
+                      <SelectTrigger>
+                        <SelectValue placeholder="Select a status" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        {statusOptions.map((status) => (
+                          <SelectItem key={status.value} value={status.value}>
+                            {status.label}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                  </div>
+                  <div>
+                    <Label>Color</Label>
+                    <Select
+                      value={editedTask.color || ''}
+                      onValueChange={handleColorChange}
+                    >
+                      <SelectTrigger>
+                        <SelectValue placeholder="Select a color" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        {colorOptions.map((color) => (
+                          <SelectItem key={color.value} value={color.value}>
+                            {color.label}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                  </div>
                   <Button onClick={handleUpdate}>Save Changes</Button>
                 </div>
               </DialogContent>
@@ -113,10 +178,13 @@ export default function TaskCard({ task, onDelete, onUpdate }: TaskCardProps) {
         </div>
       </CardHeader>
       <CardContent className="p-4 pt-0">
-        <p className="text-sm text-muted-foreground">{task.description}</p>
+        <p className="text-sm text-muted-foreground">{editedTask.description}</p>
         <div className="mt-4 flex justify-between text-sm">
-          <span>Assigned: {task.assignedUser}</span>
-          <span>Due: {new Date(task.deadline).toLocaleDateString()}</span>
+          <span>Assigned: {editedTask.assignedUser}</span>
+          <span>Due: {new Date(editedTask.deadline).toLocaleDateString()}</span>
+        </div>
+        <div className="mt-2 text-sm">
+          <span>Status: {editedTask.status}</span>
         </div>
       </CardContent>
     </Card>

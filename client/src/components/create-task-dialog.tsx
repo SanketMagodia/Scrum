@@ -14,6 +14,7 @@ import { useToast } from "@/hooks/use-toast";
 import { createTask } from "@/lib/mongodb";
 import { Task } from "@shared/schema";
 import { Plus } from "lucide-react";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 
 interface CreateTaskDialogProps {
   projectId: string;
@@ -30,7 +31,14 @@ export default function CreateTaskDialog({
   const [description, setDescription] = useState("");
   const [deadline, setDeadline] = useState("");
   const [assignedUser, setAssignedUser] = useState("");
-
+  const [color, setColor] = useState("");
+  const colorOptions = [
+    { value: "bg-red-100", label: "Red" },
+    { value: "bg-blue-100", label: "Blue" },
+    { value: "bg-green-100", label: "Green" },
+    { value: "bg-yellow-100", label: "Yellow" },
+    { value: "bg-purple-100", label: "Purple" },
+  ];
   const handleSubmit = async () => {
     if (!title || !description || !deadline || !assignedUser) {
       toast({ title: "Please fill all fields", variant: "destructive" });
@@ -45,6 +53,7 @@ export default function CreateTaskDialog({
         deadline,
         assignedUser,
         status: "pending",
+        color,
       });
       onTaskCreated(task);
       setIsOpen(false);
@@ -60,6 +69,7 @@ export default function CreateTaskDialog({
     setDescription("");
     setDeadline("");
     setAssignedUser("");
+    setColor("");
   };
 
   return (
@@ -106,6 +116,24 @@ export default function CreateTaskDialog({
               onChange={(e) => setAssignedUser(e.target.value)}
               placeholder="Username"
             />
+          </div>
+          <div>
+            <Label>Color</Label>
+            <Select
+              value={color}
+              onValueChange={setColor}
+            >
+              <SelectTrigger>
+                <SelectValue placeholder="Select a color" />
+              </SelectTrigger>
+              <SelectContent>
+                {colorOptions.map((color) => (
+                  <SelectItem key={color.value} value={color.value}>
+                    {color.label}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
           </div>
           <Button onClick={handleSubmit}>Create Task</Button>
         </div>

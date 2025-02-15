@@ -4,11 +4,9 @@ import { MongoClient } from "mongodb";
 import { Project, Task } from "@shared/schema";
 import * as crypto from 'crypto';
 
-if (!process.env.VITE_MONGODB_URI) {
-  throw new Error("Missing MONGODB_URI environment variable");
-}
 
-const client = new MongoClient(process.env.VITE_MONGODB_URI);
+
+const client = new MongoClient("mongodb+srv://MAFIA:mafia@scrum.jr87n.mongodb.net/?retryWrites=true&w=majority&appName=SCRUM");
 const db = client.db("scrumboard");
 const projects = db.collection<Project>("projects");
 const tasks = db.collection<Task>("tasks");
@@ -29,7 +27,20 @@ export async function registerRoutes(app: Express): Promise<Server> {
       res.status(500).json({ message: "Failed to create project" });
     }
   });
-
+  app.patch("/api/project/:projectId", async (req, res) => {
+    try {
+      const { projectId } = req.params;
+      const updates = req.body;
+      const result = await projects.updateOne(
+        { _id: projectId },
+        { $set: updates }
+      );
+      res.json({ success: result.modifiedCount > 0 });
+    } catch (error) {
+      res.status(500).json({ message: "Failed to update project" });
+    }
+  });
+  
   app.post("/api/project/join", async (req, res) => {
     try {
       const { projectId, password } = req.body;
@@ -63,6 +74,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       const result = await tasks.insertOne({
         ...task,
         _id: crypto.randomUUID(),
+        color: task.color || '#ffffff'
       });
       res.json(await tasks.findOne({ _id: result.insertedId }));
     } catch (error) {
@@ -84,6 +96,12 @@ export async function registerRoutes(app: Express): Promise<Server> {
     try {
       const { taskId } = req.params;
       const updates = req.body;
+      if (updates.color) {
+        // Validate color format if needed
+        // if (!/^#([0-9A-F]{3}){1,2}$/i.test(updates.color)) {
+        //   return res.status(400).json({ message: "Invalid color format" });
+        // }
+      }
       const result = await tasks.updateOne(
         { _id: taskId },
         { $set: updates }

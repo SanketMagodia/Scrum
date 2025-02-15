@@ -8,7 +8,8 @@ import { Task } from "@shared/schema";
 import TaskCard from "@/components/task-card";
 import CreateTaskDialog from "@/components/create-task-dialog";
 import CreateUserDialog from "@/components/create-user-dialog";
-
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { ResourcesTab } from "@/pages/resource";
 export default function Board() {
   const [, setLocation] = useLocation();
   const { toast } = useToast();
@@ -37,20 +38,25 @@ export default function Board() {
 
   const onDragEnd = async (result: any) => {
     if (!result.destination) return;
-
+  
     const { source, destination, draggableId } = result;
     if (source.droppableId === destination.droppableId) return;
-
+  
+    // Optimistically update the UI
+    const updatedTasks = tasks.map(task => 
+      task._id === draggableId 
+        ? { ...task, status: destination.droppableId } 
+        : task
+    );
+    setTasks(updatedTasks);
+  
+    // Update the database in the background
     try {
       await updateTask(draggableId, { status: destination.droppableId });
-      const updatedTasks = tasks.map(task => 
-        task._id === draggableId 
-          ? { ...task, status: destination.droppableId } 
-          : task
-      );
-      setTasks(updatedTasks);
     } catch (error) {
+      // If the update fails, revert the UI change
       toast({ title: "Failed to update task status", variant: "destructive" });
+      setTasks(tasks);
     }
   };
 
@@ -78,55 +84,66 @@ export default function Board() {
           </div>
         </div>
 
-        <DragDropContext onDragEnd={onDragEnd}>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-            {columns.map(({ id, title }) => (
-              <div key={id} className="bg-card rounded-lg p-4">
-                <h2 className="text-lg font-semibold mb-4">{title}</h2>
-                <Droppable droppableId={id}>
-                  {(provided) => (
-                    <div
-                      ref={provided.innerRef}
-                      {...provided.droppableProps}
-                      className="space-y-4"
-                    >
-                      {tasks
-                        .filter((task) => task.status === id)
-                        .map((task, index) => (
-                          <Draggable
-                            key={task._id}
-                            draggableId={task._id}
-                            index={index}
-                          >
-                            {(provided) => (
-                              <div
-                                ref={provided.innerRef}
-                                {...provided.draggableProps}
-                                {...provided.dragHandleProps}
+        <Tabs defaultValue="board">
+          <TabsList>
+            <TabsTrigger value="board">Board</TabsTrigger>
+            <TabsTrigger value="resources">Resources</TabsTrigger>
+          </TabsList>
+          <TabsContent value="board">
+            <DragDropContext onDragEnd={onDragEnd}>
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                {columns.map(({ id, title }) => (
+                  <div key={id} className="bg-card rounded-lg p-4">
+                    <h2 className="text-lg font-semibold mb-4">{title}</h2>
+                    <Droppable droppableId={id}>
+                      {(provided) => (
+                        <div
+                          ref={provided.innerRef}
+                          {...provided.droppableProps}
+                          className="space-y-4"
+                        >
+                          {tasks
+                            .filter((task) => task.status === id)
+                            .map((task, index) => (
+                              <Draggable
+                                key={task._id}
+                                draggableId={task._id}
+                                index={index}
                               >
-                                <TaskCard
-                                  task={task}
-                                  onDelete={(taskId) => {
-                                    setTasks(tasks.filter(t => t._id !== taskId));
-                                  }}
-                                  onUpdate={(updatedTask) => {
-                                    setTasks(tasks.map(t => 
-                                      t._id === updatedTask._id ? updatedTask : t
-                                    ));
-                                  }}
-                                />
-                              </div>
-                            )}
-                          </Draggable>
-                        ))}
-                      {provided.placeholder}
-                    </div>
-                  )}
-                </Droppable>
+                                {(provided) => (
+                                  <div
+                                    ref={provided.innerRef}
+                                    {...provided.draggableProps}
+                                    {...provided.dragHandleProps}
+                                  >
+                                    <TaskCard
+                                      task={task}
+                                      onDelete={(taskId) => {
+                                        setTasks(tasks.filter(t => t._id !== taskId));
+                                      }}
+                                      onUpdate={(updatedTask) => {
+                                        setTasks(tasks.map(t => 
+                                          t._id === updatedTask._id ? updatedTask : t
+                                        ));
+                                      }}
+                                    />
+                                  </div>
+                                )}
+                              </Draggable>
+                            ))}
+                          {provided.placeholder}
+                        </div>
+                      )}
+                    </Droppable>
+                  </div>
+                ))}
               </div>
-            ))}
-          </div>
-        </DragDropContext>
+            </DragDropContext>
+          </TabsContent>
+          <TabsContent value="resources">
+            <ResourcesTab projectId={projectId} />
+          </TabsContent>
+        </Tabs>
       </div>
     </div>
   );
