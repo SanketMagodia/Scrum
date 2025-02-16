@@ -51,7 +51,7 @@ app.use((req, res, next) => {
   app.get('*', (req, res) => {
     res.sendFile(path.join(__dirname, '../public', 'index.html'));
   });
-  
+
   app.use((err: any, _req: Request, res: Response, _next: NextFunction) => {
     const status = err.status || err.statusCode || 500;
     const message = err.message || "Internal Server Error";
@@ -71,8 +71,8 @@ app.use((req, res, next) => {
 
   // ALWAYS serve the app on port 5000
   // this serves both the API and the client
-  const PORT =process.env.PORT || 3000;
-  server.listen(PORT, "0.0.0.0", () => {
-    log(`serving on port ${PORT}`);
-  });
+  const PORT = Number(process.env.PORT) || 3000;
+server.listen(PORT, "0.0.0.0", () => {
+  log(`serving on port ${PORT}`);
+});
 })();
