@@ -1,6 +1,7 @@
 import express, { type Request, Response, NextFunction } from "express";
 import { registerRoutes } from "./routes";
 import { setupVite, serveStatic, log } from "./vite";
+import path from "path";
 
 const app = express();
 app.use(express.json());
@@ -52,13 +53,19 @@ app.use((req, res, next) => {
   // doesn't interfere with the other routes
   if (app.get("env") === "development") {
     await setupVite(app, server);
-  } else {
-    serveStatic(app);
-  }
+} else {
+    // Serve static files in production
+    app.use(express.static(path.join(__dirname, "public")));
+
+    // Handle all other routes by serving index.html
+    app.get("*", (req, res) => {
+        res.sendFile(path.join(__dirname, "public", "index.html"));
+    });
+}
 
   // ALWAYS serve the app on port 5000
   // this serves both the API and the client
-  const PORT = 5001;
+  const PORT = 3000;
   server.listen(PORT, "0.0.0.0", () => {
     log(`serving on port ${PORT}`);
   });
