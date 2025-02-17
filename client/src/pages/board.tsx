@@ -35,7 +35,9 @@ export default function Board() {
 
     loadTasks();
   }, [projectId]);
-
+  if (!localStorage.getItem('username')) {
+    setLocation(`/`);;
+    }
   const onDragEnd = async (result: any) => {
     if (!result.destination) return;
   
@@ -44,7 +46,7 @@ export default function Board() {
   
     // Optimistically update the UI
     const updatedTasks = tasks.map(task => 
-      task._id === draggableId 
+      task.idd === draggableId 
         ? { ...task, status: destination.droppableId } 
         : task
     );
@@ -74,7 +76,7 @@ export default function Board() {
     <div className="min-h-screen bg-background p-4">
       <div className="max-w-[1400px] mx-auto">
         <div className="flex justify-between items-center mb-8">
-          <h1 className="text-2xl font-bold">Project: {projectId}</h1>
+          <h1 className="text-2xl font-bold">{projectId}</h1>
           <div className="flex gap-4">
             <CreateUserDialog projectId={projectId} />
             <CreateTaskDialog 
@@ -106,8 +108,8 @@ export default function Board() {
                             .filter((task) => task.status === id)
                             .map((task, index) => (
                               <Draggable
-                                key={task._id}
-                                draggableId={task._id}
+                                key={task.idd}
+                                draggableId={task.idd}
                                 index={index}
                               >
                                 {(provided) => (
@@ -119,11 +121,11 @@ export default function Board() {
                                     <TaskCard
                                       task={task}
                                       onDelete={(taskId) => {
-                                        setTasks(tasks.filter(t => t._id !== taskId));
+                                        setTasks(tasks.filter(t => t.idd !== taskId));
                                       }}
                                       onUpdate={(updatedTask) => {
                                         setTasks(tasks.map(t => 
-                                          t._id === updatedTask._id ? updatedTask : t
+                                          t.idd === updatedTask.idd ? updatedTask : t
                                         ));
                                       }}
                                     />

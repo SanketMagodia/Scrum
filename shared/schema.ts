@@ -15,6 +15,7 @@ export const projectSchema = z.object({
 
 export const taskSchema = z.object({
   _id: z.string(),
+  idd: z.string(),
   projectId: z.string(),
   title: z.string(),
   description: z.string(),

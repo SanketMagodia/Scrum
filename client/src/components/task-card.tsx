@@ -43,17 +43,17 @@ export default function TaskCard({ task, onDelete, onUpdate }: TaskCardProps) {
   const [editedTask, setEditedTask] = useState(task);
 
   useEffect(() => {
-    const storedColor = localStorage.getItem(`taskColor_${task._id}`);
+    const storedColor = localStorage.getItem(`taskColor_${task.idd}`);
     if (storedColor) {
       setEditedTask(prevTask => ({ ...prevTask, color: storedColor }));
     }
-  }, [task._id]);
+  }, [task.idd]);
 
   const handleDelete = async () => {
     try {
-      await deleteTask(task._id);
-      onDelete(task._id);
-      localStorage.removeItem(`taskColor_${task._id}`);
+      await deleteTask(task.idd);
+      onDelete(task.idd);
+      localStorage.removeItem(`taskColor_${task.idd}`);
       toast({ title: "Task deleted successfully" });
     } catch (error) {
       toast({ title: "Failed to delete task", variant: "destructive" });
@@ -62,10 +62,10 @@ export default function TaskCard({ task, onDelete, onUpdate }: TaskCardProps) {
 
   const handleUpdate = async () => {
     try {
-      await updateTask(task._id, editedTask);
+      await updateTask(task.idd, editedTask);
       onUpdate(editedTask);
       setIsEditing(false);
-      localStorage.setItem(`taskColor_${task._id}`, editedTask.color || '');
+      localStorage.setItem(`taskColor_${task.idd}`, editedTask.color || '');
       toast({ title: "Task updated successfully" });
     } catch (error) {
       toast({ title: "Failed to update task", variant: "destructive" });
@@ -74,7 +74,7 @@ export default function TaskCard({ task, onDelete, onUpdate }: TaskCardProps) {
 
   const handleColorChange = (color: string) => {
     setEditedTask(prevTask => ({ ...prevTask, color }));
-    localStorage.setItem(`taskColor_${task._id}`, color);
+    localStorage.setItem(`taskColor_${task.idd}`, color);
   };
 
   return (

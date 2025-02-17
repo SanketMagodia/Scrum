@@ -23,45 +23,20 @@ export default function CreateUserDialog({ projectId }: CreateUserDialogProps) {
   const [username, setUsername] = useState("");
 
   const handleSubmit = async () => {
-    if (!username) {
-      toast({ title: "Please enter a username", variant: "destructive" });
-      return;
-    }
-
-    try {
-      await addUserToProject(projectId, username);
-      setIsOpen(false);
-      setUsername("");
-      toast({ title: "User added successfully" });
-    } catch (error) {
-      toast({ title: "Failed to add user", variant: "destructive" });
-    }
+    localStorage.removeItem('username');
+    window.location.reload();
   };
 
   return (
     <Dialog open={isOpen} onOpenChange={setIsOpen}>
-      <DialogTrigger asChild>
-        <Button variant="outline">
-          <UserPlus className="mr-2 h-4 w-4" />
-          Add User
-        </Button>
-      </DialogTrigger>
-      <DialogContent>
-        <DialogHeader>
-          <DialogTitle>Add New User</DialogTitle>
-        </DialogHeader>
+  
+      
+        
         <div className="space-y-4">
-          <div>
-            <Label>Username</Label>
-            <Input
-              value={username}
-              onChange={(e) => setUsername(e.target.value)}
-              placeholder="Enter username"
-            />
-          </div>
-          <Button onClick={handleSubmit}>Add User</Button>
+          
+          <Button onClick={handleSubmit}>Sign Out</Button>
         </div>
-      </DialogContent>
+      
     </Dialog>
   );
 }

@@ -21,7 +21,7 @@ export function ResourcesTab({ projectId }: ResourcesTabProps) {
 
   const loadProject = async () => {
     try {
-      const response = await axios.get(`/api/project/${projectId}`);
+      const response = await axios.get(`http://127.0.0.1:3001/api/project/${projectId}`);
       setProject(response.data);
     } catch (error) {
       toast({ title: "Failed to load project", variant: "destructive" });
@@ -30,7 +30,7 @@ export function ResourcesTab({ projectId }: ResourcesTabProps) {
 
   const updateProject = async (updates: Partial<Project>) => {
     try {
-      await axios.patch(`/api/project/${projectId}`, updates);
+      await axios.patch(`https://scrumbackend.onrender.com/api/project/${projectId}`, updates);
       await loadProject(); // Reload the project to get the latest data
     } catch (error) {
       throw error;
@@ -49,17 +49,6 @@ export function ResourcesTab({ projectId }: ResourcesTabProps) {
     }
   };
 
-  const handleUpdateResource = async (id: string, updatedResource: Partial<Resource>) => {
-    if (!project) return;
-    try {
-      const updatedResources = project.resources?.map(r => r._id === id ? { ...r, ...updatedResource } : r) || [];
-      await updateProject({ resources: updatedResources });
-      toast({ title: "Resource updated successfully" });
-    } catch (error) {
-      toast({ title: "Failed to update resource", variant: "destructive" });
-    }
-  };
-
   const handleDeleteResource = async (id: string) => {
     if (!project) return;
     try {
@@ -71,25 +60,41 @@ export function ResourcesTab({ projectId }: ResourcesTabProps) {
     }
   };
 
+  const copyToClipboard = (text: string) => {
+    navigator.clipboard.writeText(text).then(() => {
+      toast({ title: "Copied to clipboard!" });
+    }).catch(() => {
+      toast({ title: "Failed to copy", variant: "destructive" });
+    });
+  };
+
   if (!project) return <div>Loading...</div>;
 
   return (
     <div className="space-y-4">
       <h2 className="text-xl font-semibold">Project Resources</h2>
-      {project.resources?.map(resource => (
-        <div key={resource._id} className="flex items-center space-x-2">
-          <Input 
-            value={resource.name} 
-            onChange={(e) => handleUpdateResource(resource._id, { name: e.target.value })}
-          />
-          <Input 
-            type="password"
-            value={resource.value} 
-            onChange={(e) => handleUpdateResource(resource._id, { value: e.target.value })}
-          />
-          <Button onClick={() => handleDeleteResource(resource._id)} variant="destructive">Delete</Button>
-        </div>
-      ))}
+      <div className="flex flex-wrap gap-2">
+        {project.resources?.map(resource => (
+          <div
+            key={resource._id}
+            className="flex items-center gap-2 bg-gray-100 rounded-full px-4 py-2 cursor-pointer hover:bg-gray-200"
+            onClick={() => copyToClipboard(resource.value)}
+          >
+            <span className="font-medium">{resource.name}</span>
+            <Button
+              onClick={(e) => {
+                e.stopPropagation(); // Prevent bubble click from triggering
+                handleDeleteResource(resource._id);
+              }}
+              variant="ghost"
+              size="sm"
+              className="text-red-500 hover:text-red-700"
+            >
+              Delete
+            </Button>
+          </div>
+        ))}
+      </div>
       <div className="flex items-end space-x-2">
         <div>
           <Label htmlFor="new-resource-name">Name</Label>

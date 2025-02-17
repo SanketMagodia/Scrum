@@ -23,6 +23,7 @@ export default function Home() {
     setLoading(true);
     try {
       await createProject(projectId, password);
+      localStorage.setItem('username', projectId);
       setLocation(`/board/${projectId}`);
     } catch (error) {
       toast({ title: "Failed to create project", variant: "destructive" });
@@ -40,6 +41,7 @@ export default function Home() {
     try {
       const project = await joinProject(projectId, password);
       if (project) {
+        localStorage.setItem('username', projectId);
         setLocation(`/board/${projectId}`);
       } else {
         toast({ title: "Invalid project ID or password", variant: "destructive" });
