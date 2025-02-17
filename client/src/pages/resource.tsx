@@ -21,7 +21,7 @@ export function ResourcesTab({ projectId }: ResourcesTabProps) {
 
   const loadProject = async () => {
     try {
-      const response = await axios.get(`http://127.0.0.1:3001/api/project/${projectId}`);
+      const response = await axios.get(`https://scrumbackend.onrender.com/api/project/${projectId}`);
       setProject(response.data);
     } catch (error) {
       toast({ title: "Failed to load project", variant: "destructive" });
