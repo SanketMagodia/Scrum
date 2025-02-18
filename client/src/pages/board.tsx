@@ -36,7 +36,7 @@ export default function Board() {
     loadTasks();
   }, [projectId]);
   if (!localStorage.getItem('username')) {
-    setLocation(`/`);;
+    setLocation(`/`);
     }
   const onDragEnd = async (result: any) => {
     if (!result.destination) return;
