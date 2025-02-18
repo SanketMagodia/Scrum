@@ -52,7 +52,7 @@ export default function Home() {
     setLoading(false);
   };
   if (localStorage.getItem('username')) {
-    setLocation(`/board/${projectId}`);
+    setLocation(`/board/${localStorage.getItem('username')}`);
     }
   return (
     <div className="min-h-screen bg-gradient-to-br from-primary/10 to-secondary/10 flex items-center justify-center p-4">
