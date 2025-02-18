@@ -49,9 +49,9 @@ export default function CreateTaskDialog({
       const task = await createTask({
         projectId,
         title,
-        description,
+        description: "-",
         deadline,
-        assignedUser,
+        assignedUser: "Me",
         status: "pending",
         color,
       });
