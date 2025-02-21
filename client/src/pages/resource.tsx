@@ -52,7 +52,7 @@ export function ResourcesTab({ projectId }: ResourcesTabProps) {
   const handleDeleteResource = async (id: string) => {
     if (!project) return;
     try {
-      const updatedResources = project.resources?.filter(r => r._id !== id) || [];
+      const updatedResources = project.resources?.filter(r => r.name !== id) || [];
       await updateProject({ resources: updatedResources });
       toast({ title: "Resource deleted successfully" });
     } catch (error) {
@@ -84,7 +84,7 @@ export function ResourcesTab({ projectId }: ResourcesTabProps) {
             <Button
               onClick={(e) => {
                 e.stopPropagation(); // Prevent bubble click from triggering
-                handleDeleteResource(resource._id);
+                handleDeleteResource(resource.name);
               }}
               variant="ghost"
               size="sm"

@@ -28,9 +28,12 @@ export default function CreateTaskDialog({
   const { toast } = useToast();
   const [isOpen, setIsOpen] = useState(false);
   const [title, setTitle] = useState("");
-  const [description, setDescription] = useState("");
-  const [deadline, setDeadline] = useState("");
-  const [assignedUser, setAssignedUser] = useState("");
+  const [description, setDescription] = useState("-");
+  // const [deadline, setDeadline] = useState("");
+  const [deadline, setDeadline] = useState(() => {
+    const today = new Date().toISOString().split("T")[0];
+    return today;});
+  const [assignedUser, setAssignedUser] = useState("Me");
   const [color, setColor] = useState("");
   const colorOptions = [
     { value: "bg-red-100", label: "Red" },
@@ -39,6 +42,8 @@ export default function CreateTaskDialog({
     { value: "bg-yellow-100", label: "Yellow" },
     { value: "bg-purple-100", label: "Purple" },
   ];
+    
+    
   const handleSubmit = async () => {
     if (!title || !description || !deadline || !assignedUser) {
       toast({ title: "Please fill all fields", variant: "destructive" });
@@ -49,9 +54,9 @@ export default function CreateTaskDialog({
       const task = await createTask({
         projectId,
         title,
-        description: "-",
+        description,
         deadline,
-        assignedUser: "Me",
+        assignedUser,
         status: "pending",
         color,
       });
