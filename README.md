@@ -53,11 +53,6 @@ cd scrum-board
 npm install
 ```
 
-3. Create a `.env` file in the root directory with the following variables:
-```env
-VITE_API_URL=your_backend_url
-```
-
 ## Running the Application
 
 To start the development server:
@@ -82,17 +77,6 @@ The application will be available at `http://localhost:5174`
 - Authentication middleware for secure access
 - Real-time updates using WebSocket connections
 
-## Project Structure
-
-```
-src/
-├── components/          # Reusable UI components
-├── pages/              # Main application pages
-├── services/           # API service calls
-├── types/              # TypeScript type definitions
-├── utils/              # Helper functions
-└── store/              # State management
-```
 
 ## Contributing
 
