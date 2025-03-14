@@ -70,11 +70,16 @@ export default function CreateTaskDialog({
   };
 
   const resetForm = () => {
+    useState(() => {
+      const today = new Date().toISOString().split("T")[0];
+      return today;})
     setTitle("");
-    setDescription("");
-    setDeadline("");
-    setAssignedUser("");
-    setColor("");
+    setDescription("-");
+    setDeadline(() => {
+      const today = new Date().toISOString().split("T")[0];
+      return today;});
+    setAssignedUser("Me");
+    setColor("Blue");
   };
 
   return (
