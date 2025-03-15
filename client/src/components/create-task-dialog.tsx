@@ -27,14 +27,17 @@ export default function CreateTaskDialog({
 }: CreateTaskDialogProps) {
   const { toast } = useToast();
   const [isOpen, setIsOpen] = useState(false);
+  
+  // Setting default values
+  const today = new Date().toISOString().split("T")[0];
+  const defaultColor = "bg-blue-100";
+
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("-");
-  // const [deadline, setDeadline] = useState("");
-  const [deadline, setDeadline] = useState(() => {
-    const today = new Date().toISOString().split("T")[0];
-    return today;});
+  const [deadline, setDeadline] = useState(today);
   const [assignedUser, setAssignedUser] = useState("Me");
-  const [color, setColor] = useState("");
+  const [color, setColor] = useState(defaultColor); 
+
   const colorOptions = [
     { value: "bg-red-100", label: "Red" },
     { value: "bg-blue-100", label: "Blue" },
@@ -42,8 +45,7 @@ export default function CreateTaskDialog({
     { value: "bg-yellow-100", label: "Yellow" },
     { value: "bg-purple-100", label: "Purple" },
   ];
-    
-    
+
   const handleSubmit = async () => {
     if (!title || !description || !deadline || !assignedUser) {
       toast({ title: "Please fill all fields", variant: "destructive" });
@@ -70,16 +72,11 @@ export default function CreateTaskDialog({
   };
 
   const resetForm = () => {
-    useState(() => {
-      const today = new Date().toISOString().split("T")[0];
-      return today;})
     setTitle("");
     setDescription("-");
-    setDeadline(() => {
-      const today = new Date().toISOString().split("T")[0];
-      return today;});
+    setDeadline(today);
     setAssignedUser("Me");
-    setColor("Blue");
+    setColor(defaultColor);
   };
 
   return (
@@ -137,9 +134,9 @@ export default function CreateTaskDialog({
                 <SelectValue placeholder="Select a color" />
               </SelectTrigger>
               <SelectContent>
-                {colorOptions.map((color) => (
-                  <SelectItem key={color.value} value={color.value}>
-                    {color.label}
+                {colorOptions.map((option) => (
+                  <SelectItem key={option.value} value={option.value}>
+                    {option.label}
                   </SelectItem>
                 ))}
               </SelectContent>
