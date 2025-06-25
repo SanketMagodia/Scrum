@@ -6,7 +6,7 @@ async function throwIfResNotOk(res: Response) {
     throw new Error(`${res.status}: ${text}`);
   }
 }
-const BASE_URL = "https://scrumbackend.onrender.com";
+const BASE_URL = "https://readquest.onrender.com";
 export async function apiRequest(
   method: string,
   url: string,

@@ -63,7 +63,7 @@ export default function Board() {
   };
 
   if (loading) {
-    return <div>Loading...</div>;
+    return <div>Server is waking up... refresh this window in 1 min</div>;
   }
 
   const columns = [
