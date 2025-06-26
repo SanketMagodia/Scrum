@@ -21,7 +21,7 @@ export function ResourcesTab({ projectId }: ResourcesTabProps) {
 
   const loadProject = async () => {
     try {
-      const response = await axios.get(`https://scrumbackend.onrender.com/api/project/${projectId}`);
+      const response = await axios.get(`https://readquest.onrender.com/project/${projectId}`);
       setProject(response.data);
     } catch (error) {
       toast({ title: "Failed to load project", variant: "destructive" });
@@ -30,7 +30,7 @@ export function ResourcesTab({ projectId }: ResourcesTabProps) {
 
   const updateProject = async (updates: Partial<Project>) => {
     try {
-      await axios.patch(`https://scrumbackend.onrender.com/api/project/${projectId}`, updates);
+      await axios.patch(`https://readquest.onrender.com/project/${projectId}`, updates);
       await loadProject(); // Reload the project to get the latest data
     } catch (error) {
       throw error;
