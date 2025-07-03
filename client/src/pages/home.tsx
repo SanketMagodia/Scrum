@@ -55,26 +55,28 @@ export default function Home() {
     setLocation(`/board/${localStorage.getItem('username')}`);
     }
   return (
-    <div className="min-h-screen bg-gradient-to-br from-primary/10 to-secondary/10 flex items-center justify-center p-4">
-      <Card className="w-full max-w-md">
+    <div className="min-h-screen bg-gradient-to-br from-black via-gray-900 to-gray-800 flex items-center justify-center p-4">
+      <Card className="w-full max-w-md bg-gray-900 text-white border border-gray-800 shadow-lg">
         <CardHeader>
-          <CardTitle className="text-2xl text-center">Scrum Board</CardTitle>
+          <CardTitle className="text-2xl text-center text-white">Scrum Board</CardTitle>
         </CardHeader>
         <CardContent className="space-y-4">
           <div className="space-y-2">
-            <Label htmlFor="projectId">Project ID</Label>
+            <Label htmlFor="projectId" className="text-gray-300">Project ID</Label>
             <Input
               id="projectId"
+              className="bg-gray-800 text-white border border-gray-700 placeholder-gray-400"
               value={projectId}
               onChange={(e) => setProjectId(e.target.value)}
               placeholder="Enter project ID"
             />
           </div>
           <div className="space-y-2">
-            <Label htmlFor="password">Password</Label>
+            <Label htmlFor="password" className="text-gray-300">Password</Label>
             <Input
               id="password"
               type="password"
+              className="bg-gray-800 text-white border border-gray-700 placeholder-gray-400"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               placeholder="Enter password"
@@ -82,15 +84,14 @@ export default function Home() {
           </div>
           <div className="flex gap-4 pt-4">
             <Button 
-              className="flex-1" 
+              className="flex-1 bg-blue-500 hover:bg-blue-600 text-white"
               onClick={handleCreate}
               disabled={loading}
             >
               Create Project
             </Button>
             <Button 
-              className="flex-1"
-              variant="secondary"
+              className="flex-1 bg-purple-500 hover:bg-purple-600 text-white"
               onClick={handleJoin}
               disabled={loading}
             >
