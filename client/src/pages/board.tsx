@@ -73,7 +73,7 @@ export default function Board() {
   ];
 
   return (
-    <div className="min-h-screen bg-background p-4">
+    <div className="min-h-screen bg-black text-white p-4">
       <div className="max-w-[1400px] mx-auto">
         <div className="flex justify-between items-center mb-8">
           <h1 className="text-2xl font-bold">{projectId}</h1>
@@ -86,16 +86,51 @@ export default function Board() {
           </div>
         </div>
 
+        {/* Color legend */}
+        <div className="flex gap-4 mb-6">
+          <div className="flex items-center gap-2">
+            <span className="w-4 h-4 rounded bg-blue-400 border border-blue-500"></span>
+            <span className="text-sm text-white">Normal</span>
+          </div>
+          <div className="flex items-center gap-2">
+            <span className="w-4 h-4 rounded bg-red-400 border border-red-500"></span>
+            <span className="text-sm text-white">Urgent</span>
+          </div>
+          <div className="flex items-center gap-2">
+            <span className="w-4 h-4 rounded bg-green-400 border border-green-500"></span>
+            <span className="text-sm text-white">Questions/Info</span>
+          </div>
+          <div className="flex items-center gap-2">
+            <span className="w-4 h-4 rounded bg-yellow-300 border border-yellow-400"></span>
+            <span className="text-sm text-white">Review</span>
+          </div>
+          <div className="flex items-center gap-2">
+            <span className="w-4 h-4 rounded bg-purple-400 border border-purple-500"></span>
+            <span className="text-sm text-white">Optional</span>
+          </div>
+        </div>
+        {/* End color legend */}
+
         <Tabs defaultValue="board">
-          <TabsList>
-            <TabsTrigger value="board">Board</TabsTrigger>
-            <TabsTrigger value="resources">Resources</TabsTrigger>
+          <TabsList className="bg-gray-900 rounded-lg p-1 flex gap-2 mb-4">
+            <TabsTrigger
+              value="board"
+              className="px-4 py-2 rounded text-gray-200 data-[state=active]:bg-blue-400 data-[state=active]:text-white transition"
+            >
+              Board
+            </TabsTrigger>
+            <TabsTrigger
+              value="resources"
+              className="px-4 py-2 rounded text-gray-200 data-[state=active]:bg-purple-400 data-[state=active]:text-white transition"
+            >
+              Resources
+            </TabsTrigger>
           </TabsList>
           <TabsContent value="board">
             <DragDropContext onDragEnd={onDragEnd}>
               <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                 {columns.map(({ id, title }) => (
-                  <div key={id} className="bg-card rounded-lg p-4">
+                  <div key={id} className="bg-black rounded-lg p-4">
                     <h2 className="text-lg font-semibold mb-4">{title}</h2>
                     <Droppable droppableId={id}>
                       {(provided) => (

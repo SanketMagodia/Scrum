@@ -71,49 +71,55 @@ export function ResourcesTab({ projectId }: ResourcesTabProps) {
   if (!project) return <div>Loading...</div>;
 
   return (
-    <div className="space-y-4">
-      <h2 className="text-xl font-semibold">Project Resources</h2>
-      <div className="flex flex-wrap gap-2">
-        {project.resources?.map(resource => (
-          <div
-            key={resource._id}
-            className="flex items-center gap-2 bg-gray-100 rounded-full px-4 py-2 cursor-pointer hover:bg-gray-200"
-            onClick={() => copyToClipboard(resource.value)}
-          >
-            <span className="font-medium">{resource.name}</span>
-            <Button
-              onClick={(e) => {
-                e.stopPropagation(); // Prevent bubble click from triggering
-                handleDeleteResource(resource.name);
-              }}
-              variant="ghost"
-              size="sm"
-              className="text-red-500 hover:text-red-700"
+    <div className="bg-black text-white p-4 min-h-[300px] rounded-lg">
+      <div className="space-y-4">
+        <h2 className="text-xl font-semibold">Project Resources</h2>
+        <div className="flex flex-wrap gap-2">
+          {project.resources?.map(resource => (
+            <div
+              key={resource._id}
+              className="flex items-center gap-2 bg-gray-800 rounded-full px-4 py-2 cursor-pointer hover:bg-gray-700"
+              onClick={() => copyToClipboard(resource.value)}
             >
-              Delete
-            </Button>
+              <span className="font-medium">{resource.name}</span>
+              <Button
+                onClick={(e) => {
+                  e.stopPropagation(); // Prevent bubble click from triggering
+                  handleDeleteResource(resource.name);
+                }}
+                variant="ghost"
+                size="sm"
+                className="text-red-500 hover:text-red-700"
+              >
+                Delete
+              </Button>
+            </div>
+          ))}
+        </div>
+        <div className="flex items-end space-x-2">
+          <div>
+            <Label htmlFor="new-resource-name">Name</Label>
+            <Input
+              id="new-resource-name"
+              className="bg-gray-800 text-white border border-gray-700 rounded focus:ring-blue-400"
+              value={newResource.name}
+              onChange={(e) => setNewResource({ ...newResource, name: e.target.value })}
+              placeholder="Resource name"
+            />
           </div>
-        ))}
-      </div>
-      <div className="flex items-end space-x-2">
-        <div>
-          <Label htmlFor="new-resource-name">Name</Label>
-          <Input 
-            id="new-resource-name"
-            value={newResource.name} 
-            onChange={(e) => setNewResource({ ...newResource, name: e.target.value })}
-          />
+          <div>
+            <Label htmlFor="new-resource-value">Value</Label>
+            <Input
+              id="new-resource-value"
+              type="password"
+              className="bg-gray-800 text-white border border-gray-700 rounded focus:ring-blue-400"
+              value={newResource.value}
+              onChange={(e) => setNewResource({ ...newResource, value: e.target.value })}
+              placeholder="Resource value"
+            />
+          </div>
+          <Button onClick={handleAddResource}>Add Resource</Button>
         </div>
-        <div>
-          <Label htmlFor="new-resource-value">Value</Label>
-          <Input 
-            id="new-resource-value"
-            type="password"
-            value={newResource.value} 
-            onChange={(e) => setNewResource({ ...newResource, value: e.target.value })}
-          />
-        </div>
-        <Button onClick={handleAddResource}>Add Resource</Button>
       </div>
     </div>
   );

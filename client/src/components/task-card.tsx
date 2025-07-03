@@ -24,13 +24,12 @@ interface TaskCardProps {
 }
 
 const colorOptions = [
-  { value: "bg-red-100", label: "Red" },
-  { value: "bg-blue-100", label: "Blue" },
-  { value: "bg-green-100", label: "Green" },
-  { value: "bg-yellow-100", label: "Yellow" },
-  { value: "bg-purple-100", label: "Purple" },
+  { value: "bg-red-400", label: "Red" },
+  { value: "bg-blue-400", label: "Blue" },
+  { value: "bg-green-400", label: "Green" },
+  { value: "bg-yellow-300", label: "Yellow" },
+  { value: "bg-purple-400", label: "Purple" },
 ];
-
 const statusOptions = [
   { value: "pending", label: "Pending" },
   { value: "ongoing", label: "Ongoing" },
@@ -78,7 +77,16 @@ export default function TaskCard({ task, onDelete, onUpdate }: TaskCardProps) {
   };
 
   return (
-    <Card className={editedTask.color || "bg-white"}>
+    <Card
+      className={`
+        ${editedTask.color || "bg-blue-400"}
+        text-black
+        shadow-md
+        border-0
+        !border-none
+      `}
+      style={{ border: "none" }}
+    >
       <CardHeader className="p-4">
         <div className="flex justify-between items-start">
           <CardTitle className="text-lg">{editedTask.title}</CardTitle>
